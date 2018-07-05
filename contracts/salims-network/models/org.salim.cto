@@ -4,6 +4,12 @@
 
 namespace org.salim
 
+participant SampleParticipant identified by participantId {
+  o String participantId
+  o String firstName
+  o String lastName
+}
+
 enum Status{
   o INITIALSTATE
   o GLOBALCITIZENREVIEW
