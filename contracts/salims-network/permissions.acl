@@ -19,18 +19,158 @@
  * Access control rules for mynetwork
  */
 
-rule Default {
-    description: "Allow all participants access to all resources"
-    participant: "ANY"
-    operation: ALL
+/**
+ * Sample access control list.
+ */
+rule EverybodyCanReadEverything {
+    description: "Allow all participants read access to all resources"
+    participant: "org.salim.SampleParticipant"
+    operation: READ
     resource: "org.salim.*"
+    action: ALLOW
+}
+
+rule EverybodyCanSubmitTransactions {
+    description: "Allow all participants to submit transactions"
+    participant: "org.salim.SampleParticipant"
+    operation: CREATE
+    resource: "org.salim.SampleTransaction"
+    action: ALLOW
+}
+
+rule OwnerHasFullAccessToTheirAssets {
+    description: "Allow all participants full access to their assets"
+    participant(p): "org.salim.SampleParticipant"
+    operation: ALL
+    resource(r): "org.salim.SampleAsset"
+    condition: (r.owner.getIdentifier() === p.getIdentifier())
     action: ALLOW
 }
 
 rule SystemACL {
   description:  "System ACL to permit all access"
-  participant: "ANY"
+  participant: "org.hyperledger.composer.system.Participant"
   operation: ALL
   resource: "org.hyperledger.composer.system.**"
   action: ALLOW
+}
+
+rule NetworkAdminUser {
+    description: "Grant business network administrators full access to user resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "**"
+    action: ALLOW
+}
+
+rule NetworkAdminSystem {
+    description: "Grant business network administrators full access to system resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}
+
+rule R1_read_upd_pledge {
+    description: "Allow all participants read, create and update the ProjectPledge"
+    participant: "ANY"
+    operation: ALL
+    resource: "org.salim.ProjectPledge"
+    action: ALLOW
+}
+
+rule R2a_read_upd_participants {
+    description: "Allow all participants read create and update the self and other participants"
+    participant: "ANY"
+    operation: ALL
+    resource: "org.salim.GovOrg"
+    action: ALLOW
+}
+
+rule R2b_read_upd_participants {
+    description: "Allow all participants read and update the self and other participants"
+    participant: "ANY"
+    operation: ALL
+    resource: "org.salim.AidOrg"
+    action: ALLOW
+}
+
+rule R2c_read_upd_participants {
+    description: "Allow all participants read and update the self and other participants"
+    participant: "ANY"
+    operation: ALL
+    resource: "org.salim.GlobalCitizen"
+    action: ALLOW
+}
+
+rule R3a_only_AID_Create_Pledge {
+    description: "Only AIG org can create a new pledge"
+    participant: "org.salim.AidOrg"
+    operation: ALL
+    resource: "org.salim.CreateProjectPledge"
+    action: ALLOW
+}
+
+rule R3b_only_AID_SendPledge_to_GC {
+    description: "Only AIG org can send pledge to GlobalCitizen"
+    participant: "org.salim.AidOrg"
+    operation: ALL
+    resource: "org.salim.SendPledgeToGlobalCitizen"
+    action: ALLOW
+}
+
+rule R3c_only_GC_SendPledge_to_GOV {
+    description: "Only AIG org can send pledge to GlobalCitizen"
+    participant: "org.salim.GlobalCitizen"
+    operation: ALL
+    resource: "org.salim.SendPledgeToGovOrg"
+    action: ALLOW
+}
+
+rule R3d_only_GOV_Approve_funding {
+    description: "Only Gov can approve funds"
+    participant: "org.salim.GovOrg"
+    operation: ALL
+    resource: "org.salim.UpdatePledge"
+    action: ALLOW
+}
+
+rule R3e_only_GOV_Transfer_funds {
+    description: "Only Gov can transfer funds"
+    participant: "org.salim.GovOrg"
+    operation: ALL
+    resource: "org.salim.TransferFunds"
+    action: ALLOW
+}
+
+rule R3f_only_GOV_access_gov_bank_ac {
+    description: "Only Gov needs to have access to bank a/c in order to transfer funds"
+    participant: "org.salim.GovOrg"
+    operation: ALL
+    resource: "org.salim.gov_ac"
+    action: ALLOW
+}
+
+rule R3z_only_GOV_access_aid_bank_ac {
+    description: "Only Gov needs to have access to bank a/c in order to transfer funds"
+    participant: "org.salim.GovOrg"
+    operation: ALL
+    resource: "org.salim.aid_ac"
+    action: ALLOW
+}
+
+rule R3g_Gov_AID_bank_ac {
+    description: "Only Gov needs to have access to aid bank a/c in order to "
+    participant: "org.salim.GovOrg"
+    operation: ALL
+    resource: "org.salim.aid_ac"
+    action: ALLOW
+}
+
+rule R3x_READ_AID_bank_ac {
+    description: "All can read aid bank a/c in order to "
+    participant: "ANY"
+    operation: READ
+    resource: "org.salim.aid_ac"
+    action: ALLOW
 }
