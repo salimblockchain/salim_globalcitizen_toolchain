@@ -1,0 +1,132 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Sample access control list.
+ */
+/**
+ * Access control rules for mynetwork
+ */
+
+rule R1_read_upd_pledge {
+    description: "Allow all participants read, create and update the ProjectPledge"
+    participant: "ANY"
+    operation: ALL
+    resource: "org.salim.ProjectPledge"
+    action: ALLOW
+}
+
+rule R2a_read_upd_participants {
+    description: "Allow all participants read create and update the self and other participants"
+    participant: "ANY"
+    operation: ALL
+    resource: "org.salim.GovOrg"
+    action: ALLOW
+}
+
+rule R2b_read_upd_participants {
+    description: "Allow all participants read and update the self and other participants"
+    participant: "ANY"
+    operation: ALL
+    resource: "org.salim.AidOrg"
+    action: ALLOW
+}
+
+rule R2c_read_upd_participants {
+    description: "Allow all participants read and update the self and other participants"
+    participant: "ANY"
+    operation: ALL
+    resource: "org.salim.GlobalCitizen"
+    action: ALLOW
+}
+
+rule R3a_only_AID_Create_Pledge {
+    description: "Only AID org can create a new pledge"
+    participant: "org.salim.AidOrg"
+    operation: ALL
+    resource: "org.salim.CreateProjectPledge"
+    action: ALLOW
+}
+
+rule R3b_only_AID_SendPledge_to_GC {
+    description: "Only AIG org can send pledge to GlobalCitizen"
+    participant: "org.salim.AidOrg"
+    operation: ALL
+    resource: "org.salim.SendPledgeToGlobalCitizen"
+    action: ALLOW
+}
+
+rule R3c_only_GC_SendPledge_to_GOV {
+    description: "Only AIG org can send pledge to GlobalCitizen"
+    participant: "org.salim.GlobalCitizen"
+    operation: ALL
+    resource: "org.salim.SendPledgeToGovOrg"
+    action: ALLOW
+}
+
+rule R3d_only_GOV_Approve_funding {
+    description: "Only Gov can approve funds"
+    participant: "org.salim.GovOrg"
+    operation: ALL
+    resource: "org.salim.UpdatePledge"
+    action: ALLOW
+}
+
+rule R3e_only_GOV_Transfer_funds {
+    description: "Only Gov can transfer funds"
+    participant: "org.salim.GovOrg"
+    operation: ALL
+    resource: "org.salim.TransferFunds"
+    action: ALLOW
+}
+
+rule R3f_only_GOV_access_gov_bank_ac {
+    description: "Only Gov needs to have access to bank a/c in order to transfer funds"
+    participant: "org.salim.GovOrg"
+    operation: ALL
+    resource: "org.salim.gov_ac"
+    action: ALLOW
+}
+
+rule R3z_only_GOV_access_aid_bank_ac {
+    description: "Only Gov needs to have access to bank a/c in order to transfer funds"
+    participant: "org.salim.GovOrg"
+    operation: ALL
+    resource: "org.salim.aid_ac"
+    action: ALLOW
+}
+
+rule R3g_Gov_AID_bank_ac {
+    description: "ALL can read AID bank account"
+    participant: "ANY"
+    operation: READ
+    resource: "org.salim.aid_ac"
+    action: ALLOW
+}
+
+rule DefaultAdmin {
+    description: "Allow NetworkAdmin access to all resources of global citizen"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "org.salim.*"
+    action: ALLOW
+}
+
+rule SystemACL {
+  description:  "System ACL to permit all access"
+  participant: "ANY"
+  operation: ALL
+  resource: "org.hyperledger.composer.system.**"
+  action: ALLOW
+}
