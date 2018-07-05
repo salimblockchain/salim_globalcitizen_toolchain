@@ -47,7 +47,7 @@ function createProjectPledge(txParams) {
  * @transaction
  */
 function sendPledgeToGlobalCitizen(txParams) {
-    if(!txParams.citizenId || !txParams.pledgeId) {
+      if(!txParams.citizenId || !txParams.pledgeId) {
       throw new Error('Invalid input parameters!!');
     }
     txParams.pledgeId.status = 'GLOBALCITIZENREVIEW';
@@ -56,7 +56,7 @@ function sendPledgeToGlobalCitizen(txParams) {
     return getAssetRegistry(NS + '.ProjectPledge').then(function (registry) {
         return registry.update(txParams.pledgeId);
     }).then(function () {
-      return getParticipantRegistry(NS + '.GlobalCitizen');
+        return getParticipantRegistry(NS + '.GlobalCitizen');
     }).then(function (registry) {
         return registry.update(txParams.citizenId);
     });
@@ -78,7 +78,7 @@ function sendPledgeToGovOrg(txParams) {
         return getParticipantRegistry(NS + '.GovOrg');
     }).then(function (registry) {
         for(var i = 0; i < txParams.govOrg.length; i++) {
-        txParams.govOrg[i].projectPledge.push(txParams.pledgeId);
+            txParams.govOrg[i].projectPledge.push(txParams.pledgeId);
         }
         return registry.updateAll(txParams.govOrg);
     });
@@ -175,7 +175,7 @@ function transferFunds(txParams) {
 
             // check for account balance in govt account should be >= fundsPerInstallment
             if(txParams.gov_ac_Obj.balance < txParams.pledgeId.funds[i].fundsPerInstallment) {
-                throw new Error('Not enough Balance in GOVT account!!'); 
+                throw new Error('Not enough Balance in GOVT account!!');
                 //break;
             }
 
@@ -194,7 +194,7 @@ function transferFunds(txParams) {
                 txParams.pledgeId.funds[i].nextFundingDueInDays = daysToAdd;
                 txParams.pledgeId.funds[i].totalFundsReceived += txParams.pledgeId.funds[i].fundsPerInstallment;
                 //break;
-			});
+            });
         }
     }
     txParams.pledgeId.status = 'TRANSFERRING';
