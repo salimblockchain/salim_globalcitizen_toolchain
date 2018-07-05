@@ -47,8 +47,8 @@ function createProjectPledge(txParams) {
  * @transaction
  */
 function sendPledgeToGlobalCitizen(txParams) {
-      if(!txParams.citizenId || !txParams.pledgeId) {
-      throw new Error('Invalid input parameters!!');
+    if(!txParams.citizenId || !txParams.pledgeId) {
+        throw new Error('Invalid input parameters!!');
     }
     txParams.pledgeId.status = 'GLOBALCITIZENREVIEW';
     txParams.citizenId.projectPledge.push(txParams.pledgeId);
