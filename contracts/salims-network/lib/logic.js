@@ -176,7 +176,7 @@ function transferFunds(txParams) {
             // check for account balance in govt account should be >= fundsPerInstallment
             if(txParams.gov_ac_Obj.balance < txParams.pledgeId.funds[i].fundsPerInstallment) {
                 throw new Error('Not enough Balance in GOVT account!!'); 
-                break;
+                //break;
             }
 
             // if there is enough balance, settle the account balances of GOVT and AID and update the totalFundsReceived of the asset ProjectPledge
@@ -193,7 +193,7 @@ function transferFunds(txParams) {
             }).then(function() {
                 txParams.pledgeId.funds[i].nextFundingDueInDays = daysToAdd;
                 txParams.pledgeId.funds[i].totalFundsReceived += txParams.pledgeId.funds[i].fundsPerInstallment;
-                break;
+                //break;
 			});
         }
     }
