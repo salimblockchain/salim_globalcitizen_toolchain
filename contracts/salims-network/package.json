@@ -3,7 +3,7 @@
     "composer": "^0.19.10"
   },
   "name": "salims-network",
-  "version": "0.0.2",
+  "version": "0.0.1",
   "description": "Salims Network",
   "scripts": {
     "prepublish": "mkdirp ./dist && composer archive create --sourceType dir --sourceName . -a ./dist/salims-network.bna",
