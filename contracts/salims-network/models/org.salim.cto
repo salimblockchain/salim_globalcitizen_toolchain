@@ -138,28 +138,46 @@ transaction TransferFunds {
 event NewPledgeNotification {
   o String pledgeId
   o String name
-  o Double fundsRequired 
   o String status
-  o String aidOrgId
+  o Double approvedFunding
+  o Double totalFundsReceived
+  o Integer nextFundingDueInDays  
 }
 
+event PledgeSentToGcNotification {
+  o String pledgeId
+  o String name
+  o String status
+  o Double approvedFunding
+  o Double totalFundsReceived
+  o Integer nextFundingDueInDays  
+}
+
+event PledgeSentToGoVNotification {
+  o String pledgeId
+  o String name
+  o String status
+  o Double approvedFunding
+  o Double totalFundsReceived
+  o Integer nextFundingDueInDays  
+}
 
 event PledgeApprovedbyGOVNotification {
   o String pledgeId
   o String name
-  o String govOrgId
-  o String aidOrgId
-  o Double approvedFunding 
-  o Double fundsPerInstallment
+  o String status
+  o Double approvedFunding
+  o Double totalFundsReceived
+  o Integer nextFundingDueInDays
 }
 
 event PledgeTsfedbyGOVNotification {
   o String pledgeId
   o String name
-  o String govOrgId
-  o String aidOrgId
-  o Double fundsTsfedSofar 
-  o Double fundstobeTsfed
+  o String status
+  o Double approvedFunding
+  o Double totalFundsReceived
+  o Integer nextFundingDueInDays
 }
 
 

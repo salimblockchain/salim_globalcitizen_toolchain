@@ -61,9 +61,10 @@ function createProjectPledge(txParams) {
         var newPledgeNotification = getFactory().newEvent(NS, 'NewPledgeNotification');
         newPledgeNotification.pledgeId = txParams.pledgeId;
         newPledgeNotification.name = txParams.name;
-        newPledgeNotification.fundsRequired = txParams.fundsRequired;
-        newPledgeNotification.status = 'INITIALSTATE';
-        newPledgeNotification.aidOrgId = txParams.aidOrg.aidOrgId;
+		newPledgeNotification.status = 'INITIALSTATE';
+        newPledgeNotification.approvedFunding = 0;
+		newPledgeNotification.totalFundsReceived = 0;
+        newPledgeNotification.nextFundingDueInDays = 0;
         emit(newPledgeNotification);
     });
 }
@@ -85,6 +86,15 @@ function sendPledgeToGlobalCitizen(txParams) {
         return getParticipantRegistry(NS + '.GlobalCitizen');
     }).then(function (registry) {
         return registry.update(txParams.citizenId);
+    }).then(function () {
+        var pledgeSentToGcNotification = getFactory().newEvent(NS, 'PledgeSentToGcNotification');
+        pledgeSentToGcNotification.pledgeId = txParams.pledgeId.pledgeId;
+        pledgeSentToGcNotification.name = txParams.pledgeId.name;
+		pledgeSentToGcNotification.status = 'GLOBALCITIZENREVIEW';
+        pledgeSentToGcNotification.approvedFunding = 0;
+		pledgeSentToGcNotification.totalFundsReceived = 0;
+        pledgeSentToGcNotification.nextFundingDueInDays = 0;
+        emit(pledgeSentToGcNotification);
     });
 }
 /**
@@ -107,6 +117,15 @@ function sendPledgeToGovOrg(txParams) {
             txParams.govOrg[i].projectPledge.push(txParams.pledgeId);
         }
         return registry.updateAll(txParams.govOrg);
+    }).then(function () {
+        var pledgeSentToGoVNotification = getFactory().newEvent(NS, 'PledgeSentToGoVNotification');
+        pledgeSentToGoVNotification.pledgeId = txParams.pledgeId.pledgeId;
+        pledgeSentToGoVNotification.name = txParams.pledgeId.name;
+		pledgeSentToGoVNotification.status = 'GOVORGREVIEW';
+        pledgeSentToGoVNotification.approvedFunding = 0;
+		pledgeSentToGoVNotification.totalFundsReceived = 0;
+        pledgeSentToGoVNotification.nextFundingDueInDays = 0;
+        emit(pledgeSentToGoVNotification);
     });
 }
 /**
@@ -154,10 +173,10 @@ function updatePledge(txParams) {
         var pledgeApprovedbyGOVNotification = getFactory().newEvent(NS, 'PledgeApprovedbyGOVNotification');
         pledgeApprovedbyGOVNotification.pledgeId = txParams.pledgeId.pledgeId;
         pledgeApprovedbyGOVNotification.name = txParams.pledgeId.name;
-        pledgeApprovedbyGOVNotification.govOrgId = txParams.govOrgId.govOrgId;
-        pledgeApprovedbyGOVNotification.aidOrgId = txParams.pledgeId.aidOrg.aidOrgId;
+		pledgeApprovedbyGOVNotification.status = 'PROPOSALFUNDED'
         pledgeApprovedbyGOVNotification.approvedFunding = txParams.approvedFunding;
-        pledgeApprovedbyGOVNotification.fundsPerInstallment = txParams.fundsPerInstallment;
+        pledgeApprovedbyGOVNotification.totalFundsReceived = 0;
+		pledgeApprovedbyGOVNotification.nextFundingDueInDays = daysToAdd;
         emit(pledgeApprovedbyGOVNotification);
     });
 }
@@ -220,20 +239,22 @@ function transferFunds(txParams) {
                 txParams.pledgeId.funds[i].nextFundingDueInDays = daysToAdd;
                 txParams.pledgeId.funds[i].totalFundsReceived += txParams.pledgeId.funds[i].fundsPerInstallment;
                 //break;
+            }).then(function () {
+				txParams.pledgeId.status = 'TRANSFERRING';
+                return getAssetRegistry(NS + '.ProjectPledge')
+			}).then(function (registry) {
+                return registry.update(txParams.pledgeId);
+            }).then(function () {
+                var pledgeTsfedbyGOVNotification = getFactory().newEvent(NS, 'PledgeTsfedbyGOVNotification');
+                pledgeTsfedbyGOVNotification.pledgeId = txParams.pledgeId.pledgeId;
+                pledgeTsfedbyGOVNotification.name = txParams.pledgeId.name;
+			    pledgeTsfedbyGOVNotification.status = 'TRANSFERRING';
+                pledgeTsfedbyGOVNotification.approvedFunding = txParams.pledgeId.funds[i].approvedFunding;
+                pledgeTsfedbyGOVNotification.totalFundsReceived = txParams.pledgeId.funds[i].totalFundsReceived;
+				pledgeTsfedbyGOVNotification.nextFundingDueInDays = daysToAdd;
+                emit(pledgeTsfedbyGOVNotification);
             });
-        }
+	    }
     }
-    txParams.pledgeId.status = 'TRANSFERRING';
-    return getAssetRegistry(NS + '.ProjectPledge').then(function (registry) {
-        return registry.update(txParams.pledgeId);
-    }).then(function () {
-        var pledgeTsfedbyGOVNotification = getFactory().newEvent(NS, 'PledgeTsfedbyGOVNotification');
-        pledgeTsfedbyGOVNotification.pledgeId = txParams.pledgeId.pledgeId;
-        pledgeTsfedbyGOVNotification.name = txParams.pledgeId.name;
-        pledgeTsfedbyGOVNotification.govOrgId = txParams.govOrgId.govOrgId;
-        pledgeTsfedbyGOVNotification.aidOrgId = txParams.pledgeId.aidOrg.aidOrgId;
-        pledgeTsfedbyGOVNotification.fundsTsfedSofar = txParams.pledgeId.funds[0].totalFundsReceived;
-        pledgeTsfedbyGOVNotification.fundstobeTsfed = txParams.pledgeId.funds[0].approvedFunding - txParams.pledgeId.funds[0].totalFundsReceived;
-        emit(pledgeTsfedbyGOVNotification);
-    });
+    
 }
