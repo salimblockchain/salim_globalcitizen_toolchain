@@ -254,6 +254,6 @@ function transferFunds(txParams) {
                 pledgeTsfedbyGOVNotification.nextFundingDueInDays = daysToAdd;
                 emit(pledgeTsfedbyGOVNotification);
             });
-       }
+        }
     }
 }
