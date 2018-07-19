@@ -39,7 +39,7 @@ function sendIotReading(txParams) {
     if(!txParams.iotIdObj) {
         throw new Error('Invalid ioT!!');
     }
- 
+
     txParams.iotIdObj.rpm =  txParams.rpm;
     txParams.iotIdObj.pressure =  txParams.pressure;
     txParams.iotIdObj.level =  txParams.level;
