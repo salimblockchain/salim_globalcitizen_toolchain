@@ -23,18 +23,75 @@
  * Sample access control list.
  */
  
-rule Default {
-    description: "Allow all participants access to all resources"
+rule Default1 {
+    description: "Allow all participants to access the asset IotReadings"
     participant: "ANY"
     operation: ALL
+    resource: "org.salim.IotReadings"
+    action: ALLOW
+}
+
+rule Default2 {
+    description: "Allow all participants to submit SendIotReading txn"
+    participant: "ANY"
+    operation: ALL
+    resource: "org.salim.SendIotReading"
+    action: ALLOW
+}
+
+rule Default3 {
+    description: "Allow all participants to create Users participant"
+    participant: "ANY"
+    operation: ALL
+    resource: "org.salim.Users"
+    action: ALLOW
+}
+
+rule EverybodyCanReadEverything {
+    description: "Allow all participants read access to all resources"
+    participant: "org.salim.SampleParticipant"
+    operation: READ
     resource: "org.salim.*"
+    action: ALLOW
+}
+
+rule EverybodyCanSubmitTransactions {
+    description: "Allow all participants to submit transactions"
+    participant: "org.salim.SampleParticipant"
+    operation: CREATE
+    resource: "org.salim.SampleTransaction"
+    action: ALLOW
+}
+
+rule OwnerHasFullAccessToTheirAssets {
+    description: "Allow all participants full access to their assets"
+    participant(p): "org.salim.SampleParticipant"
+    operation: ALL
+    resource(r): "org.salim.SampleAsset"
+    condition: (r.owner.getIdentifier() === p.getIdentifier())
     action: ALLOW
 }
 
 rule SystemACL {
   description:  "System ACL to permit all access"
-  participant: "ANY"
+  participant: "org.hyperledger.composer.system.Participant"
   operation: ALL
   resource: "org.hyperledger.composer.system.**"
   action: ALLOW
+}
+
+rule NetworkAdminUser {
+    description: "Grant business network administrators full access to user resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "**"
+    action: ALLOW
+}
+
+rule NetworkAdminSystem {
+    description: "Grant business network administrators full access to system resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
 }
