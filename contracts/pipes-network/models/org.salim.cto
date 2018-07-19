@@ -1,0 +1,76 @@
+/**
+ * Write your model definitions here
+ */
+
+namespace org.salim
+
+participant SampleParticipant identified by participantId {
+  o String participantId
+  o String firstName
+  o String lastName
+}
+
+asset SampleAsset identified by assetId {
+  o String assetId
+  --> SampleParticipant owner
+  o String value
+}
+
+transaction SampleTransaction {
+  --> SampleAsset asset
+  o String newValue
+}
+
+event SampleEvent {
+  --> SampleAsset asset
+  o String oldValue
+  o String newValue
+}
+
+enum Level{
+  o RED
+  o YELLOW
+  o GREEN
+}
+
+
+participant Users identified by userId  {
+  o String userId
+  o String userName
+  o String office
+}
+
+asset IotReadings identified by iotId {
+  o String iotId
+  o Double fromLat
+  o Double fromLong
+  o Double toLat
+  o Double toLong
+  o Double radius
+  o Double rpm
+  o Double pressure
+  o Double level
+}
+
+
+transaction SendIotReading {
+  --> IotReadings iotIdObj
+  o Double rpm
+  o Double pressure
+  o Double level
+}
+
+
+event IssueWarning {
+  o String iotId
+  o Double fromLat
+  o Double fromLong
+  o Double toLat
+  o Double toLong
+  o Double radius
+  o Double rpm
+  o Double pressure
+  o Double level
+  o Double cumulReading
+  o String alertLvl  
+}
