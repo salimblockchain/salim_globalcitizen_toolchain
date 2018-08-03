@@ -3,7 +3,7 @@
     "composer": "^0.19.10"
   },
   "name": "pipes-network",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Pipes Network",
   "scripts": {
     "prepublish": "mkdirp ./dist && composer archive create --sourceType dir --sourceName . -a ./dist/pipes-network.bna",
